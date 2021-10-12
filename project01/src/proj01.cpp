@@ -127,9 +127,7 @@ void init()
 
 	pvmMatrixID = glGetUniformLocation(program, "mPVM");
 
-	// visible angle, aspect ratio, near plane, far plane
 	projectMat = glm::perspective(glm::radians(65.0f), 1.0f, 0.1f, 100.0f);
-	// 0,0,2 에서 0,0,0을 바라보고, y축(0,1,0)이 윗방향이 됨
 	viewMat = glm::lookAt(glm::vec3(10, 0, 5), glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
 
 	glEnable(GL_DEPTH_TEST);
@@ -143,21 +141,21 @@ void drawHuman(glm::mat4 humanMat)
 	glm::mat4 modelMat, pvmMat;
 
 	// Head
-	modelMat = glm::scale(humanMat, glm::vec3(1, 1, 1));  //Projection*View*Carmat*Translation*Scaling*vertex
 	modelMat = glm::translate(humanMat, glm::vec3(0, 0, 4));
+	modelMat = glm::scale(modelMat, glm::vec3(1, 1, 1));
 	pvmMat = projectMat * viewMat * modelMat;
 	glUniformMatrix4fv(pvmMatrixID, 1, GL_FALSE, &pvmMat[0][0]);
 	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
 
 	// Body
-	modelMat = glm::translate(humanMat, glm::vec3(0, 0, 2));  
+	modelMat = glm::translate(humanMat, glm::vec3(0, 0, 2));
 	modelMat = glm::scale(modelMat, glm::vec3(1, 2, 3));
 	pvmMat = projectMat * viewMat * modelMat;
 	glUniformMatrix4fv(pvmMatrixID, 1, GL_FALSE, &pvmMat[0][0]);
 	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
 
 	// L Forearm
-	modelMat = glm::translate(humanMat, glm::vec3(0, 1.3, 2.8));  
+	modelMat = glm::translate(humanMat, glm::vec3(0, 1.3, 2.8));
 	modelMat = glm::rotate(modelMat, 1.0f, glm::vec3(1, 0, 0));
 	modelMat = glm::scale(modelMat, glm::vec3(0.5, 0.5, 1.5));
 	pvmMat = projectMat * viewMat * modelMat;
@@ -165,7 +163,7 @@ void drawHuman(glm::mat4 humanMat)
 	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
 
 	// L Arm
-	modelMat = glm::translate(humanMat, glm::vec3(0, 1.3, 2.1));  
+	modelMat = glm::translate(humanMat, glm::vec3(0, 1.3, 2.1));
 	modelMat = glm::rotate(modelMat, -0.8f, glm::vec3(1, 0, 0));
 	modelMat = glm::scale(modelMat, glm::vec3(0.5, 0.5, 1.2));
 	pvmMat = projectMat * viewMat * modelMat;
@@ -173,7 +171,7 @@ void drawHuman(glm::mat4 humanMat)
 	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
 
 	// R Forearm
-	modelMat = glm::translate(humanMat, glm::vec3(0, -1.3, 2.6));  
+	modelMat = glm::translate(humanMat, glm::vec3(0, -1.3, 2.6));
 	modelMat = glm::rotate(modelMat, -0.6f, glm::vec3(1, 0, 0));
 	modelMat = glm::rotate(modelMat, -0.2f, glm::vec3(0, 1, 0));
 	modelMat = glm::scale(modelMat, glm::vec3(0.5, 0.5, 1.5));
@@ -182,7 +180,7 @@ void drawHuman(glm::mat4 humanMat)
 	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
 
 	// R Arm
-	modelMat = glm::translate(humanMat, glm::vec3(0.3, -1.6, 1.7));  
+	modelMat = glm::translate(humanMat, glm::vec3(0.3, -1.6, 1.7));
 	modelMat = glm::rotate(modelMat, 0.3f, glm::vec3(1, 0, 0));
 	modelMat = glm::rotate(modelMat, -0.4f, glm::vec3(0, 1, 0));
 	modelMat = glm::scale(modelMat, glm::vec3(0.5, 0.5, 1.2));
@@ -191,21 +189,21 @@ void drawHuman(glm::mat4 humanMat)
 	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
 
 	// L Upper Leg
-	modelMat = glm::translate(humanMat, glm::vec3(0, 0.5, -0.2)); 
+	modelMat = glm::translate(humanMat, glm::vec3(0, 0.5, -0.2));
 	modelMat = glm::scale(modelMat, glm::vec3(0.8, 0.8, 1.5));
 	pvmMat = projectMat * viewMat * modelMat;
 	glUniformMatrix4fv(pvmMatrixID, 1, GL_FALSE, &pvmMat[0][0]);
 	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
 
 	// L Lower Leg
-	modelMat = glm::translate(humanMat, glm::vec3(0, 0.5, -1.7));  
+	modelMat = glm::translate(humanMat, glm::vec3(0, 0.5, -1.7));
 	modelMat = glm::scale(modelMat, glm::vec3(0.8, 0.8, 1.5));
 	pvmMat = projectMat * viewMat * modelMat;
 	glUniformMatrix4fv(pvmMatrixID, 1, GL_FALSE, &pvmMat[0][0]);
 	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
 
 	// R Upper Leg
-	modelMat = glm::translate(humanMat, glm::vec3(0, -0.5, -0.2)); 
+	modelMat = glm::translate(humanMat, glm::vec3(0, -0.5, -0.2));
 	modelMat = glm::rotate(modelMat, -0.2f, glm::vec3(1, 0, 0));
 	modelMat = glm::scale(modelMat, glm::vec3(0.8, 0.8, 1.5));
 	pvmMat = projectMat * viewMat * modelMat;
@@ -228,13 +226,13 @@ void swimmingAnim(glm::mat4 humanMat)
 
 	// Head
 	modelMat = glm::translate(humanMat, glm::vec3(0, 0, 4));
-	modelMat = glm::scale(modelMat, glm::vec3(1, 1, 1));  //Projection*View*Carmat*Translation*Scaling*vertex
+	modelMat = glm::scale(modelMat, glm::vec3(1, 1, 1));
 	pvmMat = projectMat * viewMat * modelMat;
 	glUniformMatrix4fv(pvmMatrixID, 1, GL_FALSE, &pvmMat[0][0]);
 	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
 
 	// Body
-	modelMat = glm::translate(humanMat, glm::vec3(0, 0, 2));  
+	modelMat = glm::translate(humanMat, glm::vec3(0, 0, 2));
 	modelMat = glm::scale(modelMat, glm::vec3(1, 2, 3));
 	pvmMat = projectMat * viewMat * modelMat;
 	glUniformMatrix4fv(pvmMatrixID, 1, GL_FALSE, &pvmMat[0][0]);
@@ -243,7 +241,7 @@ void swimmingAnim(glm::mat4 humanMat)
 	// L Forearm
 	modelMat = glm::translate(humanMat, glm::vec3(0, 1.3, 2.7));
 	modelMat = glm::translate(modelMat, glm::vec3(0, 0, 0.4));
-	modelMat = glm::rotate(modelMat, leftArmAngle*5.0f, glm::vec3(0, 1, 0));
+	modelMat = glm::rotate(modelMat, leftArmAngle * 5.0f, glm::vec3(0, 1, 0));
 	modelMat = glm::translate(modelMat, glm::vec3(0, 0, -0.4));
 	modelMat = glm::scale(modelMat, glm::vec3(0.5, 0.5, 1.2));
 	pvmMat = projectMat * viewMat * modelMat;
@@ -253,11 +251,11 @@ void swimmingAnim(glm::mat4 humanMat)
 	// L Arm
 	if (leftArmAngle >= 0 && leftArmAngle < 0.45) {
 		modelMat = glm::translate(humanMat, glm::vec3(0, 1.3, 1.5));
-		modelMat = glm::translate(modelMat, glm::vec3(0.8*sin(-leftArmAngle * 5.0f), 0, -cos(leftArmAngle * 5.0f)+1.0));
+		modelMat = glm::translate(modelMat, glm::vec3(0.8 * sin(-leftArmAngle * 5.0f), 0, -cos(leftArmAngle * 5.0f) + 1.0));
 	}
 	else if (leftArmAngle >= 0.45 && leftArmAngle < 0.64) {
 		modelMat = glm::translate(humanMat, glm::vec3(0, 1.3, 1.5));
-		modelMat = glm::translate(modelMat, glm::vec3(0.8 * sin(-leftArmAngle * 5.0f), 0, -cos(leftArmAngle * 5.0f)+2.2));
+		modelMat = glm::translate(modelMat, glm::vec3(0.8 * sin(-leftArmAngle * 5.0f), 0, -cos(leftArmAngle * 5.0f) + 2.2));
 	}
 	else {
 		modelMat = glm::translate(humanMat, glm::vec3(0, 1.3, 1.5));
@@ -265,15 +263,15 @@ void swimmingAnim(glm::mat4 humanMat)
 		modelMat = glm::rotate(modelMat, leftArmAngle * 5.0f, glm::vec3(0, 1, 0));
 		modelMat = glm::translate(modelMat, glm::vec3(0, 0, -1.6));
 	}
-	modelMat = glm::scale(modelMat, glm::vec3(0.5, 0.5, 1.2)); 
+	modelMat = glm::scale(modelMat, glm::vec3(0.5, 0.5, 1.2));
 	pvmMat = projectMat * viewMat * modelMat;
 	glUniformMatrix4fv(pvmMatrixID, 1, GL_FALSE, &pvmMat[0][0]);
 	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
 
 	// R Forearm
-	modelMat = glm::translate(humanMat, glm::vec3(0, -1.3, 2.7));  
+	modelMat = glm::translate(humanMat, glm::vec3(0, -1.3, 2.7));
 	modelMat = glm::translate(modelMat, glm::vec3(0, 0, 0.4));
-	modelMat = glm::rotate(modelMat, rightArmAngle*5.0f, glm::vec3(0, 1, 0));
+	modelMat = glm::rotate(modelMat, rightArmAngle * 5.0f, glm::vec3(0, 1, 0));
 	modelMat = glm::translate(modelMat, glm::vec3(0, 0, -0.4));
 	modelMat = glm::scale(modelMat, glm::vec3(0.5, 0.5, 1.2));
 	pvmMat = projectMat * viewMat * modelMat;
@@ -301,9 +299,14 @@ void swimmingAnim(glm::mat4 humanMat)
 	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
 
 	// L Upper Leg
-	modelMat = glm::translate(humanMat, glm::vec3(0, 0.5, -0.2));  
+	modelMat = glm::translate(humanMat, glm::vec3(0, 0.5, -0.2));
 	modelMat = glm::translate(modelMat, glm::vec3(0, 0, 1.5));
-	modelMat = glm::rotate(modelMat, legAngle,glm::vec3(0, 1, 0));
+	if (legAngle > 0.3f) {
+		modelMat = glm::rotate(modelMat, 0.3f, glm::vec3(0, 1, 0));
+	}
+	else {
+		modelMat = glm::rotate(modelMat, legAngle, glm::vec3(0, 1, 0));
+	}
 	modelMat = glm::translate(modelMat, glm::vec3(0, 0, -1.5));
 	modelMat = glm::scale(modelMat, glm::vec3(0.8, 0.8, 1.5));
 	pvmMat = projectMat * viewMat * modelMat;
@@ -311,19 +314,31 @@ void swimmingAnim(glm::mat4 humanMat)
 	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
 
 	// L Lower Leg
-	modelMat = glm::translate(humanMat, glm::vec3(0, 0.5, -1.6));  
-	modelMat = glm::translate(modelMat, glm::vec3(0, 0, 3.0));
-	modelMat = glm::rotate(modelMat, legAngle, glm::vec3(0, 1, 0));
-	modelMat = glm::translate(modelMat, glm::vec3(0, 0, -3.0));
+	modelMat = glm::translate(humanMat, glm::vec3(0, 0.5, -1.6));
+	if (legAngle > 0.3f) {
+		modelMat = glm::translate(modelMat, glm::vec3(0, 0, 2.2));
+		modelMat = glm::rotate(modelMat, legAngle*1.3f, glm::vec3(0, 1, 0));
+		modelMat = glm::translate(modelMat, glm::vec3(0, 0, -2.2));
+	}
+	else {
+		modelMat = glm::translate(modelMat, glm::vec3(0, 0, 3.0));
+		modelMat = glm::rotate(modelMat, legAngle, glm::vec3(0, 1, 0));
+		modelMat = glm::translate(modelMat, glm::vec3(0, 0, -3.0));
+	}
 	modelMat = glm::scale(modelMat, glm::vec3(0.8, 0.8, 1.8));
 	pvmMat = projectMat * viewMat * modelMat;
 	glUniformMatrix4fv(pvmMatrixID, 1, GL_FALSE, &pvmMat[0][0]);
 	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
 
 	// R Upper Leg
-	modelMat = glm::translate(humanMat, glm::vec3(0, -0.5, -0.2));  
+	modelMat = glm::translate(humanMat, glm::vec3(0, -0.5, -0.2));
 	modelMat = glm::translate(modelMat, glm::vec3(0, 0, 1.5));
-	modelMat = glm::rotate(modelMat, -legAngle, glm::vec3(0, 1, 0));
+	if (-legAngle > 0.3f) {
+		modelMat = glm::rotate(modelMat, 0.3f, glm::vec3(0, 1, 0));
+	}
+	else {
+		modelMat = glm::rotate(modelMat, -legAngle, glm::vec3(0, 1, 0));
+	}
 	modelMat = glm::translate(modelMat, glm::vec3(0, 0, -1.5));
 	modelMat = glm::scale(modelMat, glm::vec3(0.8, 0.8, 1.5));
 	pvmMat = projectMat * viewMat * modelMat;
@@ -331,10 +346,17 @@ void swimmingAnim(glm::mat4 humanMat)
 	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
 
 	// R Lower Leg
-	modelMat = glm::translate(humanMat, glm::vec3(0, -0.5, -1.6));  
-	modelMat = glm::translate(modelMat, glm::vec3(0, 0, 3.0));
-	modelMat = glm::rotate(modelMat, -legAngle, glm::vec3(0, 1, 0));
-	modelMat = glm::translate(modelMat, glm::vec3(0, 0, -3.0));
+	modelMat = glm::translate(humanMat, glm::vec3(0, -0.5, -1.6));
+	if (-legAngle > 0.3f) {
+		modelMat = glm::translate(modelMat, glm::vec3(0, 0, 2.2));
+		modelMat = glm::rotate(modelMat, -legAngle * 1.3f, glm::vec3(0, 1, 0));
+		modelMat = glm::translate(modelMat, glm::vec3(0, 0, -2.2));
+	}
+	else {
+		modelMat = glm::translate(modelMat, glm::vec3(0, 0, 3.0));
+		modelMat = glm::rotate(modelMat, -legAngle, glm::vec3(0, 1, 0));
+		modelMat = glm::translate(modelMat, glm::vec3(0, 0, -3.0));
+	}
 	modelMat = glm::scale(modelMat, glm::vec3(0.8, 0.8, 1.8));
 	pvmMat = projectMat * viewMat * modelMat;
 	glUniformMatrix4fv(pvmMatrixID, 1, GL_FALSE, &pvmMat[0][0]);
@@ -346,7 +368,6 @@ void display(void)
 	glm::mat4 worldMat, pvmMat;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// 회전 Matrix (Identity Matrix, angle, 회전축(1,1,0, 왼쪽아래에서 오른쪽 위로가는 직선)
 	worldMat = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(1, 0, 0));
 
 	if (isStaticHuman)
@@ -374,29 +395,29 @@ void idle()
 	static int prevTime = glutGet(GLUT_ELAPSED_TIME);
 	int currTime = glutGet(GLUT_ELAPSED_TIME);
 
-	// 20ms 마다 한번씩 실행
+	// 10ms 마다 한번씩 실행
 	if (abs(currTime - prevTime) >= 10)
 	{
 		float t = abs(currTime - prevTime);
 		// 시간 변화량*10초에 한바퀴
 		if (leftArmAngle > 1.26f) { leftArmAngle = 0.0f; }
 		if (rightArmAngle > 1.26f) { rightArmAngle = 0.0f; }
-		leftArmAngle += glm::radians(t*360.0f / 10000.0f);
+		leftArmAngle += glm::radians(t * 360.0f / 10000.0f);
 		rightArmAngle += glm::radians(t * 360.0f / 10000.0f);
 		if (isLegReturn) {
-			if (legAngle < -0.3f) {
+			if (legAngle < -0.5f) {
 				isLegReturn = !isLegReturn;
 			}
 			else {
-				legAngle -= glm::radians(t*3 * 360.0f / 10000.0f);
+				legAngle -= glm::radians(t * 3 * 360.0f / 10000.0f);
 			}
 		}
 		else {
-			if (legAngle > 0.3f) {
+			if (legAngle > 0.5f) {
 				isLegReturn = !isLegReturn;
 			}
 			else {
-				legAngle += glm::radians(t*3 * 360.0f / 10000.0f);
+				legAngle += glm::radians(t * 3 * 360.0f / 10000.0f);
 			}
 		}
 		prevTime = currTime;
@@ -434,7 +455,7 @@ void resize(int w, int h)
 //----------------------------------------------------------------------------
 
 int
-main(int argc, char **argv)
+main(int argc, char** argv)
 {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
