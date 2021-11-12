@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="src\InitShader.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\proj02.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\texture.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\fshader.glsl">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="src\vshader.glsl">
+      <Filter>shader</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="shader">
+      <UniqueIdentifier>{ed97e348-fddf-47ab-b1a9-60a5d2ed253c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source">
+      <UniqueIdentifier>{e9c56a4b-3f91-44f5-86ec-2138eeb473fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header">
+      <UniqueIdentifier>{ce551698-e465-471c-b88f-c1d9996c6260}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\cube.h">
+      <Filter>header</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
