@@ -50,7 +50,6 @@ vector<glm::vec2> texCoords;
 const int NumVertices = 36; //(6 faces)(2 triangles/face)(3 vertices/triangle)
 
 point4 points[NumVertices];
-color4 colors[NumVertices];
 
 // Vertices of a unit cube centered at origin, sides aligned with axes
 point4 vertices[8] = {
@@ -98,9 +97,6 @@ void computeTexCoordQuad(glm::vec2 texcoord[4], float u, float v, float u2, floa
 	// v0=(u, v)    v1=(u2, v)   <= quadangle
 	// v2=(u, v2)   v3=(u2, v2)
 
-	// v0=(u, v)    v1=(u2, v)   <= quadangle
-	// v2=(u, v2)   v3=(u2, v2)
-
 	texcoord[0][U] = texcoord[2][U] = (float)u;
 	texcoord[1][U] = texcoord[3][U] = (float)u2;
 
@@ -121,12 +117,12 @@ void computeTexCoordQuad(glm::vec2 texcoord[4], float u, float v, float u2, floa
 int Index = 0;
 void quad(int a, int b, int c, int d)
 {
-	colors[Index] = vertex_colors[a]; points[Index] = vertices[a];  verts.push_back(vertices[a]); Index++;
-	colors[Index] = vertex_colors[b]; points[Index] = vertices[b];  verts.push_back(vertices[b]); Index++;
-	colors[Index] = vertex_colors[c]; points[Index] = vertices[c];  verts.push_back(vertices[c]); Index++;
-	colors[Index] = vertex_colors[a]; points[Index] = vertices[a];  verts.push_back(vertices[a]); Index++;
-	colors[Index] = vertex_colors[c]; points[Index] = vertices[c];  verts.push_back(vertices[c]); Index++;
-	colors[Index] = vertex_colors[d]; points[Index] = vertices[d];  verts.push_back(vertices[d]); Index++;
+	points[Index] = vertices[a];  verts.push_back(vertices[a]); Index++;
+	points[Index] = vertices[b];  verts.push_back(vertices[b]); Index++;
+	points[Index] = vertices[c];  verts.push_back(vertices[c]); Index++;
+	points[Index] = vertices[a];  verts.push_back(vertices[a]); Index++;
+	points[Index] = vertices[c];  verts.push_back(vertices[c]); Index++;
+	points[Index] = vertices[d];  verts.push_back(vertices[d]); Index++;
 
 }
 
@@ -136,7 +132,7 @@ void colorcube()
 	quad(1, 0, 3, 2);
 	// v0=(u, v)    v1=(u2, v)   <= quadangle
 	// v2=(u, v2)   v3=(u2, v2)
-	computeTexCoordQuad(texcoord, vertices[0][0], vertices[0][1], vertices[2][0], vertices[2][1]);
+	computeTexCoordQuad(texcoord, vertices[1][0], vertices[1][1], vertices[3][0], vertices[3][1]);
 	texCoords.push_back(texcoord[0]);
 	texCoords.push_back(texcoord[2]);
 	texCoords.push_back(texcoord[3]);
@@ -176,7 +172,7 @@ void colorcube()
 	texCoords.push_back(texcoord[1]);
 
 	quad(4, 5, 6, 7);
-	computeTexCoordQuad(texcoord, vertices[4][0], vertices[4][1], vertices[6][0], vertices[6][1]);
+	computeTexCoordQuad(texcoord, vertices[5][0], vertices[5][1], vertices[7][0], vertices[7][1]);
 	texCoords.push_back(texcoord[0]);
 	texCoords.push_back(texcoord[2]);
 	texCoords.push_back(texcoord[3]);
