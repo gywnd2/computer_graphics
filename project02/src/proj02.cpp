@@ -40,20 +40,17 @@ enum eShadeMode { NO_LIGHT, GOURAUD, PHONG, NUM_LIGHT_MODE };
 int shadeMode = NO_LIGHT;
 int isTexture = false;
 int isRotate = false;
-GLuint projectMatrixID;
-GLuint viewMatrixID;
-GLuint modelMatrixID;
-GLuint shadeModeID;
-GLuint textureModeID;
+GLuint projectMatrixID, viewMatrixID, modelMatrixID, shadeModeID, textureModeID, TextureID;
+GLuint program;
+GLuint headTexture, bodyTexture, armTexture, legTexture;
+glm::vec2 texcoord[4];
+vector<glm::vec4> verts, normals;
+vector<glm::vec2> texCoords;
 
 const int NumVertices = 36; //(6 faces)(2 triangles/face)(3 vertices/triangle)
 
 point4 points[NumVertices];
 color4 colors[NumVertices];
-
-vector<glm::vec4> verts;
-vector<glm::vec4> normals;
-vector<glm::vec2> texCoords;
 
 // Vertices of a unit cube centered at origin, sides aligned with axes
 point4 vertices[8] = {
@@ -93,7 +90,8 @@ void computeNormals() {
 	}
 }
 
-void computeTexCoordQuad(glm::vec2 texcoord[4], int u, int v, int u2, int v2)
+// Compute Texture Coordination
+void computeTexCoordQuad(glm::vec2 texcoord[4], float u, float v, float u2, float v2)
 {
 	const int U = 0, V = 1;
 
@@ -113,8 +111,6 @@ void computeTexCoordQuad(glm::vec2 texcoord[4], int u, int v, int u2, int v2)
 	{
 		texcoord[1][U] = texcoord[3][U] = 1.0;
 	}
-	//texcoord[u] = atan2(normals[y], normals[x]) / (2 * PI) + 0.5;
-	//texcoord[v] = acos(normals[z]/sqrt(length(normal))) / PI;
 }
 
 //----------------------------------------------------------------------------
@@ -131,30 +127,74 @@ void quad(int a, int b, int c, int d)
 	colors[Index] = vertex_colors[a]; points[Index] = vertices[a];  verts.push_back(vertices[a]); Index++;
 	colors[Index] = vertex_colors[c]; points[Index] = vertices[c];  verts.push_back(vertices[c]); Index++;
 	colors[Index] = vertex_colors[d]; points[Index] = vertices[d];  verts.push_back(vertices[d]); Index++;
-	
-	texCoords.push_back(vertices[a]);
-	texCoords.push_back(vertices[b]);
-	texCoords.push_back(vertices[c]);
 
-	texCoords.push_back(vertices[a]);
-	texCoords.push_back(vertices[c]);
-	texCoords.push_back(vertices[d]);
 }
-
-//----------------------------------------------------------------------------
-
-
-//----------------------------------------------------------------------------
 
 // generate 12 triangles: 36 vertices and 36 colors
 void colorcube()
 {
 	quad(1, 0, 3, 2);
+	// v0=(u, v)    v1=(u2, v)   <= quadangle
+	// v2=(u, v2)   v3=(u2, v2)
+	computeTexCoordQuad(texcoord, vertices[0][0], vertices[0][1], vertices[2][0], vertices[2][1]);
+	texCoords.push_back(texcoord[0]);
+	texCoords.push_back(texcoord[2]);
+	texCoords.push_back(texcoord[3]);
+
+	texCoords.push_back(texcoord[0]);
+	texCoords.push_back(texcoord[3]);
+	texCoords.push_back(texcoord[1]);
+
 	quad(2, 3, 7, 6);
+	computeTexCoordQuad(texcoord, vertices[3][1], vertices[3][2], vertices[6][1], vertices[6][2]);
+	texCoords.push_back(texcoord[0]);
+	texCoords.push_back(texcoord[2]);
+	texCoords.push_back(texcoord[3]);
+
+	texCoords.push_back(texcoord[0]);
+	texCoords.push_back(texcoord[3]);
+	texCoords.push_back(texcoord[1]);
+
 	quad(3, 0, 4, 7);
+	computeTexCoordQuad(texcoord, vertices[0][0], vertices[0][2], vertices[7][0], vertices[7][2]);
+	texCoords.push_back(texcoord[0]);
+	texCoords.push_back(texcoord[2]);
+	texCoords.push_back(texcoord[3]);
+
+	texCoords.push_back(texcoord[0]);
+	texCoords.push_back(texcoord[3]);
+	texCoords.push_back(texcoord[1]);
+
 	quad(6, 5, 1, 2);
+	computeTexCoordQuad(texcoord, vertices[1][0], vertices[1][2], vertices[6][0], vertices[6][2]);
+	texCoords.push_back(texcoord[0]);
+	texCoords.push_back(texcoord[2]); 
+	texCoords.push_back(texcoord[3]);
+
+	texCoords.push_back(texcoord[0]);
+	texCoords.push_back(texcoord[3]);
+	texCoords.push_back(texcoord[1]);
+
 	quad(4, 5, 6, 7);
+	computeTexCoordQuad(texcoord, vertices[4][0], vertices[4][1], vertices[6][0], vertices[6][1]);
+	texCoords.push_back(texcoord[0]);
+	texCoords.push_back(texcoord[2]);
+	texCoords.push_back(texcoord[3]);
+
+	texCoords.push_back(texcoord[0]);
+	texCoords.push_back(texcoord[3]);
+	texCoords.push_back(texcoord[1]);
+
 	quad(5, 4, 0, 1);
+	computeTexCoordQuad(texcoord, vertices[0][0], vertices[0][2], vertices[5][0], vertices[5][2]);
+	texCoords.push_back(texcoord[0]);
+	texCoords.push_back(texcoord[2]);
+	texCoords.push_back(texcoord[3]);
+
+	texCoords.push_back(texcoord[0]);
+	texCoords.push_back(texcoord[3]);
+	texCoords.push_back(texcoord[1]);
+
 	computeNormals();
 }
 
@@ -186,7 +226,7 @@ void init()
 	glBufferSubData(GL_ARRAY_BUFFER, vertSize + normalSize, texSize, texCoords.data());
 
 	// Load shaders and use the resulting shader program
-	GLuint program = InitShader("src/vshader.glsl", "src/fshader.glsl");
+	program = InitShader("src/vshader.glsl", "src/fshader.glsl");
 	glUseProgram(program);
 
 	// set up vertex arrays
@@ -232,18 +272,13 @@ void init()
 
 
 	// Load the texture using any two methods
-	GLuint headTexture = loadBMP_custom("earth.bmp");
-	//GLuint Texture = loadDDS("uvtemplate.DDS");
+	headTexture = loadBMP_custom("brick.bmp");
+	bodyTexture = loadBMP_custom("water.bmp");
+	armTexture = loadBMP_custom("marble.bmp");
+	legTexture = loadBMP_custom("tile.bmp");
 
 	// Get a handle for our "myTextureSampler" uniform
-	GLuint TextureID = glGetUniformLocation(program, "cubeTexture");
-
-	// Bind our texture in Texture Unit 0
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, headTexture);
-
-	// Set our "myTextureSampler" sampler to use Texture Unit 0
-	glUniform1i(TextureID, 0);
+	TextureID = glGetUniformLocation(program, "cubeTexture");
 
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.0, 0.0, 0.0, 1.0);
@@ -253,9 +288,13 @@ void init()
 
 void drawHuman(glm::mat4 humanMat)
 {
-	//glm::mat4 modelMat, pvmMat;
-
 	// Head
+	// Bind our texture in Texture Unit 0
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, headTexture);
+	// Set our "myTextureSampler" sampler to use Texture Unit 0
+	glUniform1i(TextureID, 0);
+
 	modelMat = glm::translate(humanMat, glm::vec3(0, 0, 4));
 	modelMat = glm::scale(modelMat, glm::vec3(1, 1, 1));
 	pvmMat = projectMat * viewMat * modelMat;
@@ -263,6 +302,12 @@ void drawHuman(glm::mat4 humanMat)
 	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
 
 	// Body
+	// Bind our texture in Texture Unit 1
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, bodyTexture);
+	// Set our "myTextureSampler" sampler to use Texture Unit 1
+	glUniform1i(TextureID, 1);
+
 	modelMat = glm::translate(humanMat, glm::vec3(0, 0, 2));
 	modelMat = glm::scale(modelMat, glm::vec3(1, 2, 3));
 	pvmMat = projectMat * viewMat * modelMat;
@@ -270,6 +315,12 @@ void drawHuman(glm::mat4 humanMat)
 	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
 
 	// L Forearm
+	// Bind our texture in Texture Unit 2
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, armTexture);
+	// Set our "myTextureSampler" sampler to use Texture Unit 2
+	glUniform1i(TextureID, 2);
+
 	modelMat = glm::translate(humanMat, glm::vec3(0, 1.3, 2.8));
 	modelMat = glm::rotate(modelMat, 1.0f, glm::vec3(1, 0, 0));
 	modelMat = glm::scale(modelMat, glm::vec3(0.5, 0.5, 1.5));
@@ -304,6 +355,12 @@ void drawHuman(glm::mat4 humanMat)
 	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
 
 	// L Upper Leg
+	// Bind our texture in Texture Unit 3
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, legTexture);
+	// Set our "myTextureSampler" sampler to use Texture Unit 3
+	glUniform1i(TextureID, 3);
+
 	modelMat = glm::translate(humanMat, glm::vec3(0, 0.5, -0.2));
 	modelMat = glm::scale(modelMat, glm::vec3(0.8, 0.8, 1.5));
 	pvmMat = projectMat * viewMat * modelMat;
@@ -337,9 +394,13 @@ void drawHuman(glm::mat4 humanMat)
 
 void swimmingAnim(glm::mat4 humanMat)
 {
-	//glm::mat4 modelMat, pvmMat;
-
 	// Head
+	// Bind our texture in Texture Unit 0
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, headTexture);
+	// Set our "myTextureSampler" sampler to use Texture Unit 0
+	glUniform1i(TextureID, 0);
+
 	modelMat = glm::translate(humanMat, glm::vec3(0, 0, 4));
 	modelMat = glm::scale(modelMat, glm::vec3(1, 1, 1));
 	pvmMat = projectMat * viewMat * modelMat;
@@ -347,6 +408,12 @@ void swimmingAnim(glm::mat4 humanMat)
 	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
 
 	// Body
+	// Bind our texture in Texture Unit 1
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, bodyTexture);
+	// Set our "myTextureSampler" sampler to use Texture Unit 1
+	glUniform1i(TextureID, 1);
+
 	modelMat = glm::translate(humanMat, glm::vec3(0, 0, 2));
 	modelMat = glm::scale(modelMat, glm::vec3(1, 2, 3));
 	pvmMat = projectMat * viewMat * modelMat;
@@ -354,6 +421,12 @@ void swimmingAnim(glm::mat4 humanMat)
 	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
 
 	// L Forearm
+	// Bind our texture in Texture Unit 2
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, armTexture);
+	// Set our "myTextureSampler" sampler to use Texture Unit 2
+	glUniform1i(TextureID, 2);
+
 	modelMat = glm::translate(humanMat, glm::vec3(0, 1.3, 2.7));
 	modelMat = glm::translate(modelMat, glm::vec3(0, 0, 0.4));
 	modelMat = glm::rotate(modelMat, leftArmAngle * 5.0f, glm::vec3(0, 1, 0));
@@ -414,6 +487,12 @@ void swimmingAnim(glm::mat4 humanMat)
 	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
 
 	// L Upper Leg
+	// Bind our texture in Texture Unit 3
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, legTexture);
+	// Set our "myTextureSampler" sampler to use Texture Unit 3
+	glUniform1i(TextureID, 3);
+
 	modelMat = glm::translate(humanMat, glm::vec3(0, 0.5, -0.2));
 	modelMat = glm::translate(modelMat, glm::vec3(0, 0, 1.5));
 	if (legAngle > 0.3f) {
@@ -480,7 +559,7 @@ void swimmingAnim(glm::mat4 humanMat)
 
 void display(void)
 {
-	glm::mat4 worldMat, pvmMat;
+	glm::mat4 worldMat;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	worldMat = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(1, 0, 0));
@@ -514,7 +593,6 @@ void idle()
 	if (abs(currTime - prevTime) >= 10)
 	{
 		float t = abs(currTime - prevTime);
-		float speed= 360.0f / 10000.0f;
 		// 시간 변화량*10초에 한바퀴
 		if (leftArmAngle > 1.26f) { leftArmAngle = 0.0f; }
 		if (rightArmAngle > 1.26f) { rightArmAngle = 0.0f; }
@@ -536,9 +614,6 @@ void idle()
 				legAngle += glm::radians(t * 3 * 360.0f / 10000.0f);
 			}
 		}
-		/*if (isRotate) {
-			modelMat = glm::rotate(modelMat, glm::radians(t * speed), glm::vec3(1.0f, 1.0f, 0.0f));
-		}*/
 		prevTime = currTime;
 		glutPostRedisplay();
 	}
@@ -555,10 +630,6 @@ void keyboard(unsigned char key, int x, int y)
 	case 'l': case 'L':
 		shadeMode = (++shadeMode % NUM_LIGHT_MODE);
 		glUniform1i(shadeModeID, shadeMode);
-		glutPostRedisplay();
-		break;
-	case 'r': case 'R':
-		isRotate = !isRotate;
 		glutPostRedisplay();
 		break;
 	case 't': case 'T':
