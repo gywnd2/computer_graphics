@@ -1,0 +1,3 @@
+C:\repo\computer_graphics\IBL_specular\Debug\IBL_specular.exe
+C:\repo\computer_graphics\project03\Debug\proj03.exe
+C:\repo\computer_graphics\project03\IBL_specular\Debug\IBL_specular.exe
